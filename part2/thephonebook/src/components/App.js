@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import Filter from './Filter';
 import PersonForm from './PersonForm';
 import Persons from './Persons';
-import axios from 'axios';
+import personService from '../services/personService';
 
 const App = () => {
     const [ persons, setPersons ] = useState([]) 
@@ -10,16 +10,11 @@ const App = () => {
     const [ newNumber, setNewNumber ] = useState('')
     const [ newFilter, setNewFilter ] = useState('')
 
-    const hook = () => {
-        console.log('effect')
-        axios.get('http://localhost:3001/persons')
-        .then(response => {
-          console.log('promise fulfilled')
-          setPersons(response.data)
+    useEffect(() => {
+        personService.getAll().then(initialData => {
+            setPersons(initialData)
         })
-    }
-
-    useEffect(hook, [])
+    }, [])
 
     const addPerson = (event) => {
         event.preventDefault();
@@ -29,29 +24,27 @@ const App = () => {
         if (checkDupes) {
             window.alert(`${newName} is already added to phonebook`)
         } else {
-            const nameObject = {
+            const personObject = {
                 name: newName,
-                number: newNumber,
-                id: persons.length + 1
+                number: newNumber
             }
 
-            setPersons(persons.concat(nameObject))
-            setNewName('')
+            personService.create(personObject).then(returnedPerson => {
+                setPersons(persons.concat(returnedPerson))
+                setNewName('')
+            })
         }
     }
 
     const handleNameChange = (event) => {
-        console.log(event.target.value)
         setNewName(event.target.value)
     }
 
     const handleNumberChange = (event) => {
-        console.log(event.target.value)
         setNewNumber(event.target.value)
     }
 
     const handleFilterChange = (event) => {
-        console.log(event.target.value)
         setNewFilter(event.target.value)
     }
   
