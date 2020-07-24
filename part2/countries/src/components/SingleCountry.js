@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Languages from './Languages';
-import Weather from './Weather'
+import Weather from './Weather';
 import axios from 'axios';
 
 const SingleCountry = ({country}) => {
