@@ -19,10 +19,18 @@ const App = () => {
     const addPerson = (event) => {
         event.preventDefault();
 
-        const checkDupes = persons.find(item => item.name === newName) ? true : false
+        const person = persons.find(item => item.name === newName)
+        const checkDupes = person ? true : false
+        const changedPerson = {...person, number: newNumber}
 
         if (checkDupes) {
-            window.alert(`${newName} is already added to phonebook`)
+            if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+
+                personService.update(person.id, changedPerson).then(returnedPerson => {
+                    setPersons(persons.map(person => person.id !== changedPerson.id ? person : changedPerson))
+                })
+            }
+            
         } else {
             const personObject = {
                 name: newName,
