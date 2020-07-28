@@ -3,12 +3,16 @@ import Filter from './Filter';
 import PersonForm from './PersonForm';
 import Persons from './Persons';
 import personService from '../services/personService';
+import Notification from './Notification';
+import Styles from './Styles'
 
 const App = () => {
     const [ persons, setPersons ] = useState([]) 
     const [ newName, setNewName ] = useState('')
     const [ newNumber, setNewNumber ] = useState('')
     const [ newFilter, setNewFilter ] = useState('')
+    const [ message, setMessage ] = useState(null)
+    const [ style, setStyle ] = useState({})
 
     useEffect(() => {
         personService.getAll().then(initialData => {
@@ -40,6 +44,12 @@ const App = () => {
             personService.create(personObject).then(returnedPerson => {
                 setPersons(persons.concat(returnedPerson))
                 setNewName('')
+                setMessage(`Added ${personObject.name}`)
+                setStyle(Styles.StyleSuccess)
+                setTimeout(() => {
+                    setMessage(null)
+                    setStyle(null)
+                  }, 5000)
             })
         }
     }
@@ -59,6 +69,7 @@ const App = () => {
     return (
       <div>
         <h2>Phonebook</h2>
+        <Notification message={message} classValue={style}/>
         <Filter newFilter={newFilter} handleFilterChange={handleFilterChange} />
         <h2>Add a new contact</h2>
         <PersonForm addPerson={addPerson} newName={newName} newNumber={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
